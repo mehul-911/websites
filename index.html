@@ -495,7 +495,9 @@
 <body>
     <header>
         <nav>
-            <img src="assets/clixLogo.png" alt="logo" style="width: 15%;">
+            <a href="#" class="logo" id="logo-link">
+                <img src="assets/clixLogo.png" alt="logo" style="width: 15%;">
+            </a>
             <button class="mobile-menu-toggle" id="mobile-menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
@@ -953,7 +955,7 @@
                         </div>
                     </div> 
                     <div class="photo-item" data-category="kids">
-                        <img src="assets/kids/5.jpeg" alt="kids">
+                        <img src="assets/kids/5.jpg" alt="kids">
                         <div class="photo-overlay">
                             <i class="fas fa-expand-alt view-icon"></i>
                         </div>
@@ -1056,7 +1058,7 @@
         let currentImages = [];
         let currentImageIndex = 0;
         document.getElementById('current-year').textContent = new Date().getFullYear();
-
+        
         // Navigation functionality
         document.addEventListener('DOMContentLoaded', function() {
             const navLinks = document.querySelectorAll('.nav-menu a');
@@ -1064,7 +1066,40 @@
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const navMenu = document.getElementById('nav-menu');
             const mobileMenuIcon = mobileMenuToggle.querySelector('i');
-            
+            const logoLink = document.getElementById('logo-link');
+            // Logo click event - go to home page
+            logoLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all nav links
+                navLinks.forEach(l => l.classList.remove('active'));
+                // Add active class to Home link
+                document.querySelector('[data-section="home"]').classList.add('active');
+                
+                // Hide all sections
+                sections.forEach(section => section.classList.remove('active'));
+                // Show home section
+                const homeSection = document.getElementById('home');
+                if (homeSection) {
+                    homeSection.classList.add('active');
+                }
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileMenuIcon.classList.remove('fa-times');
+                    mobileMenuIcon.classList.add('fa-bars');
+                }
+                
+                // Re-initialize images for home section
+                setTimeout(() => {
+                    const activeFilter = document.querySelector('.filter-btn.active');
+                    if (activeFilter) {
+                        filterImages(activeFilter.dataset.category);
+                    }
+                }, 100);
+            });
+
             // Mobile menu toggle
             mobileMenuToggle.addEventListener('click', function() {
                 navMenu.classList.toggle('active');
