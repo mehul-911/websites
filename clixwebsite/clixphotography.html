@@ -1088,6 +1088,14 @@
                         mobileMenuIcon.classList.remove('fa-times');
                         mobileMenuIcon.classList.add('fa-bars');
                     }
+                    
+                    // Re-initialize images when switching sections
+                    setTimeout(() => {
+                        const activeFilter = document.querySelector('.filter-btn.active');
+                        if (activeFilter) {
+                            filterImages(activeFilter.dataset.category);
+                        }
+                    }, 100);
                 });
             });
 
@@ -1127,7 +1135,7 @@
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     // Remove active class from all filter buttons
-                    filterBtns.forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     // Add active class to clicked button
                     this.classList.add('active');
                     
@@ -1140,22 +1148,34 @@
         function filterImages(category) {
             // Get current active section
             const activeSection = document.querySelector('.section.active');
+            if (!activeSection) return;
+            
             const photoItems = activeSection.querySelectorAll('.photo-item');
             
+            // Clear current images array
             currentImages = [];
             
+            // Build new filtered array
             photoItems.forEach((item, index) => {
+                const img = item.querySelector('img');
+                if (!img) return;
+                
                 if (category === 'all' || item.dataset.category === category) {
                     item.style.display = 'block';
-                    const img = item.querySelector('img');
                     currentImages.push({
                         src: img.src,
-                        alt: img.alt
+                        alt: img.alt,
+                        element: item,
+                        originalIndex: index
                     });
                 } else {
                     item.style.display = 'none';
                 }
             });
+            
+            // Reset current image index
+            currentImageIndex = 0;
+            
         }
 
         function setupLightbox() {
@@ -1168,11 +1188,30 @@
             // Open lightbox when clicking on photo items
             document.addEventListener('click', function(e) {
                 const photoItem = e.target.closest('.photo-item');
-                if (photoItem) {
+                if (photoItem && photoItem.style.display !== 'none') {
+                    // Find the correct index in the filtered currentImages array
                     const img = photoItem.querySelector('img');
-                    currentImageIndex = currentImages.findIndex(item => item.src === img.src);
-                    showLightboxImage(currentImageIndex);
-                    lightbox.classList.add('active');
+                    let foundIndex = -1;
+                    
+                    // Search for the clicked image in currentImages array
+                    for (let i = 0; i < currentImages.length; i++) {
+                        if (currentImages[i].src === img.src && currentImages[i].element === photoItem) {
+                            foundIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    // If not found by element match, try by src only
+                    if (foundIndex === -1) {
+                        foundIndex = currentImages.findIndex(item => item.src === img.src);
+                    }
+                    
+                    // Set the index
+                    currentImageIndex = foundIndex >= 0 ? foundIndex : 0;                    
+                    if (currentImages.length > 0) {
+                        showLightboxImage(currentImageIndex);
+                        lightbox.classList.add('active');
+                    }
                 }
             });
             
@@ -1190,19 +1229,23 @@
             
             // Previous image
             lightboxPrev.addEventListener('click', function() {
-                currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
-                showLightboxImage(currentImageIndex);
+                if (currentImages.length > 0) {
+                    currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+                    showLightboxImage(currentImageIndex);
+                }
             });
             
             // Next image
             lightboxNext.addEventListener('click', function() {
-                currentImageIndex = (currentImageIndex + 1) % currentImages.length;
-                showLightboxImage(currentImageIndex);
+                if (currentImages.length > 0) {
+                    currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+                    showLightboxImage(currentImageIndex);
+                }
             });
             
             // Keyboard navigation
             document.addEventListener('keydown', function(e) {
-                if (lightbox.classList.contains('active')) {
+                if (lightbox.classList.contains('active') && currentImages.length > 0) {
                     switch(e.key) {
                         case 'Escape':
                             lightbox.classList.remove('active');
@@ -1222,34 +1265,40 @@
 
         function showLightboxImage(index) {
             const lightboxImg = document.getElementById('lightbox-img');
-            if (currentImages[index]) {
-                lightboxImg.src = currentImages[index].src;
-                lightboxImg.alt = currentImages[index].alt;
+            
+            // Ensure index is within bounds
+            if (index < 0 || index >= currentImages.length || !currentImages[index]) {
+                console.warn('Invalid image index:', index, 'Total images:', currentImages.length);
+                return;
+            }
+            
+            const imageData = currentImages[index];
+            lightboxImg.src = imageData.src;
+            lightboxImg.alt = imageData.alt;
+            
+            // Remove any existing orientation classes
+            lightboxImg.classList.remove('portrait', 'landscape', 'square');
+            
+            // Wait for image to load to get accurate dimensions
+            lightboxImg.onload = function() {
+                const aspectRatio = this.naturalWidth / this.naturalHeight;
                 
-                // Remove any existing orientation classes
-                lightboxImg.classList.remove('portrait', 'landscape', 'square');
-                
-                // Wait for image to load to get accurate dimensions
-                lightboxImg.onload = function() {
-                    const aspectRatio = this.naturalWidth / this.naturalHeight;
-                    
-                    // Determine orientation and apply appropriate class
-                    if (aspectRatio < 0.8) {
-                        // Portrait: height > width (significantly)
-                        this.classList.add('portrait');
-                    } else if (aspectRatio > 1.2) {
-                        // Landscape: width > height (significantly)
-                        this.classList.add('landscape');
-                    } else {
-                        // Square or close to square
-                        this.classList.add('square');
-                    }
-                };
-                
-                // If image is already cached, trigger onload manually
-                if (lightboxImg.complete) {
-                    lightboxImg.onload();
+                // Determine orientation and apply appropriate class
+                if (aspectRatio < 0.8) {
+                    // Portrait: height > width (significantly)
+                    this.classList.add('portrait');
+                } else if (aspectRatio > 1.2) {
+                    // Landscape: width > height (significantly)
+                    this.classList.add('landscape');
+                } else {
+                    // Square or close to square
+                    this.classList.add('square');
                 }
+            };
+            
+            // If image is already cached, trigger onload manually
+            if (lightboxImg.complete) {
+                lightboxImg.onload();
             }
         }
     </script>
