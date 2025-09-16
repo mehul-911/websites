@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Event Photography</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #000;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 300;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #ccc;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('assets/home.jpg') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Portfolio Section */
+        .portfolio-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #fff;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 2px solid #333;
+            color: #fff;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #fff;
+            color: #000;
+        }
+
+        /* Photo Grid */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .photo-item {
+            position: relative;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            cursor: pointer;
+            background: #111;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .photo-item:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .view-icon {
+            font-size: 2rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        /* Portrait orientation styles */
+        .lightbox img.portrait {
+            max-width: 70vw;
+            max-height: 90vh;
+        }
+
+        /* Landscape orientation styles */
+        .lightbox img.landscape {
+            max-width: 90vw;
+            max-height: 70vh;
+        }
+
+        /* Square orientation styles */
+        .lightbox img.square {
+            max-width: 80vw;
+            max-height: 80vh;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lightbox-prev {
+            left: 2rem;
+        }
+
+        .lightbox-next {
+            right: 2rem;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* About Section */
+        .about-section {
+            background: #111;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .about-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            text-align: center;
+        }
+
+        .contact-item i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        .contact-item h3 {
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+
+        .contact-item p {
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            background: #111;
+            padding: 2rem;
+            text-align: center;
+            color: #fff;
+            border-top: 1px solid #333;
+        }
+
+        /* Hidden sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(0, 0, 0, 0.98);
+                padding: 2rem;
+                gap: 1rem;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                border-top: 1px solid #333;
+            }
+
+            .nav-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .nav-menu li {
+                text-align: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #333;
+            }
+
+            .nav-menu li:last-child {
+                border-bottom: none;
+            }
+
+            .nav-menu a {
+                font-size: 1.1rem;
+                display: block;
+                padding: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .lightbox-nav {
+                padding: 0.5rem;
+                font-size: 1.5rem;
+            }
+
+            .lightbox-prev {
+                left: 1rem;
+            }
+
+            .lightbox-next {
+                right: 1rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            /* Mobile lightbox adjustments */
+            .lightbox img.portrait {
+                max-width: 95vw;
+                max-height: 85vh;
+            }
+
+            .lightbox img.landscape {
+                max-width: 95vw;
+                max-height: 60vh;
+            }
+
+            .lightbox img.square {
+                max-width: 90vw;
+                max-height: 70vh;
+            }
+
+            .lightbox-close {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <!-- <a href="#" class="logo">PhotoPro</a> -->
+            <img src="assets/clixLogo.png" alt="logo" style="width: 15%;">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#" data-section="home" class="active">Home</a></li>
+                <li><a href="#" data-section="portfolio">Portfolio</a></li>
+                <li><a href="#" data-section="about">About</a></li>
+                <li><a href="#" data-section="contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <div id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>Professional Event Photography</h1>
+                    <p>Capturing life's most precious moments with artistic vision and technical excellence</p>
+                </div>
+            </div>
+
+            <div class="portfolio-section">
+                <div class="section-title">
+                    <h2>Featured Work</h2>
+                    <p>Explore our diverse portfolio of event photography</p>
+                </div>
+
+                <div class="category-filter">
+                    <button class="filter-btn active" data-category="all">All</button>
+                    <button class="filter-btn" data-category="wedding">Weddings</button>
+                    <button class="filter-btn" data-category="festival">Festival</button>
+                   <button class="filter-btn" data-category="party">Parties</button>
+                    <button class="filter-btn" data-category="maternity">Maternity</button>
+                </div>
+
+                <div class="photo-grid" id="photo-grid">
+                    <!-- Wedding Photos -->
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/1.jpg" alt="Wedding Photography">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/3.jpg" alt="Wedding Ceremony">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/5.jpg" alt="Wedding Reception">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!-- Festival Photos -->
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/7.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/9.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/5.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!-- Party Photos -->
+                    <div class="photo-item" data-category="party">
+                        <img src="assets/sweet16/2.jpg" alt="Birthday Party">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="photo-item" data-category="party">
+                        <img src="assets/sweet16/4.jpg" alt="Celebration">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="photo-item" data-category="party">
+                        <img src="assets/sweet16/6.jpg" alt="Party Event">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+
+                    <!-- Maternity Photos -->
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/1.jpg" alt="Professional Portrait">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/5.jpg" alt="Portrait Session">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/3.jpg" alt="Business Portrait">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Section -->
+        <div id="portfolio" class="section">
+            <div class="portfolio-section">
+                <div class="section-title">
+                    <h2>Complete Portfolio</h2>
+                    <p>Browse through our extensive collection of event photography</p>
+                </div>
+
+                <div class="category-filter">
+                    <button class="filter-btn active" data-category="all">All</button>
+                    <button class="filter-btn" data-category="wedding">Weddings</button>
+                    <button class="filter-btn" data-category="sweet16">Sweet 16</button>
+                    <button class="filter-btn" data-category="anniversary">Anniversary</button>
+                    <button class="filter-btn" data-category="shower">Bridal Shower</button>
+                    <button class="filter-btn" data-category="babyshower">Baby Shower</button>
+                    <button class="filter-btn" data-category="maternity">Maternity</button>
+                    <button class="filter-btn" data-category="festival">Festival</button>
+                    <button class="filter-btn" data-category="birthday">Birthday</button>
+                    <button class="filter-btn" data-category="kids">Kids</button>
+                </div>
+
+                <div class="photo-grid" id="portfolio-grid">
+                    <!-- Same photos as above - you can add more here -->
+                    <!--  Wedding Photos -->
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/1.jpg" alt="Wedding Photography">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/2.jpg" alt="Wedding Ceremony">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/3.jpg" alt="Wedding Ceremony">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/4.jpg" alt="Wedding Ceremony">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="wedding">
+                        <img src="assets/wedding/5.jpg" alt="Wedding Ceremony">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  Sweet 16 Photos -->
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/1.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/2.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/3.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/4.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/5.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/6.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="sweet16">
+                        <img src="assets/sweet16/7.jpg" alt="Sweet 16">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                   <!--  Anniversary Photos -->
+                    <div class="photo-item" data-category="anniversary">
+                        <img src="assets/anniversary/1.jpg" alt="anniversary">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="anniversary">
+                        <img src="assets/anniversary/2.jpg" alt="anniversary">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="anniversary">
+                        <img src="assets/anniversary/3.jpg" alt="anniversary">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="anniversary">
+                        <img src="assets/anniversary/4.jpg" alt="anniversary">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  Baby Shower Photos -->
+                    <div class="photo-item" data-category="babyshower">
+                        <img src="assets/babyshower/1.jpg" alt="baby shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="babyshower">
+                        <img src="assets/babyshower/2.jpg" alt="baby shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="babyshower">
+                        <img src="assets/babyshower/3.jpg" alt="baby shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="babyshower">
+                        <img src="assets/babyshower/4.jpg" alt="baby shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="babyshower">
+                        <img src="assets/babyshower/5.jpg" alt="baby shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  Bridal Shower Photos -->
+                    <div class="photo-item" data-category="shower">
+                        <img src="assets/bridalshower/1.jpg" alt="Bridal shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="shower">
+                        <img src="assets/bridalshower/2.jpg" alt="Bridal shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="shower">
+                        <img src="assets/bridalshower/3.jpg" alt="Bridal shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="shower">
+                        <img src="assets/bridalshower/4.jpg" alt="Bridal shower">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  maternity Photos -->
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/1.jpg" alt="maternity">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/2.jpg" alt="maternity">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/3.jpg" alt="maternity">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/4.jpg" alt="maternity">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="maternity">
+                        <img src="assets/maternity/5.jpg" alt="maternity">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  festival Photos -->
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/1.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/2.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/3.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/4.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/5.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/6.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/7.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/8.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="festival">
+                        <img src="assets/festival/9.jpg" alt="festival">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  Birthday Photos -->
+                    <div class="photo-item" data-category="birthday">
+                        <img src="assets/birthday/1.jpg" alt="birthday">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="birthday">
+                        <img src="assets/birthday/2.jpg" alt="birthday">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="birthday">
+                        <img src="assets/birthday/3.jpg" alt="birthday">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="birthday">
+                        <img src="assets/birthday/4.jpg" alt="birthday">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <div class="photo-item" data-category="birthday">
+                        <img src="assets/birthday/5.jpg" alt="birthday">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div>
+                    <!--  Kids Photos -->
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/1.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/2.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/3.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/4.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/5.jpeg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/6.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/7.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/8.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                    <div class="photo-item" data-category="kids">
+                        <img src="assets/kids/9.jpg" alt="kids">
+                        <div class="photo-overlay">
+                            <i class="fas fa-expand-alt view-icon"></i>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div id="about" class="section">
+            <div class="about-section">
+                <div class="about-content">
+                    <h2>About the Photographer</h2>
+                    <p>With over 6 years of experience in event photography, I specialize in capturing the authentic emotions and precious moments that make each event unique. My approach combines artistic vision with technical expertise to deliver stunning photographs that tell your story.</p>
+                    
+                    <p>For any event, I pride myself on being unobtrusive while ensuring no important moment goes uncaptured. Every photograph is carefully composed and edited to reflect the true essence of your special occasion.</p>
+                    
+                    <p>I believe that great photography is not just about technical skill, but about understanding people and emotions. This philosophy drives my work and helps me create images that you'll treasure for a lifetime.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div id="contact" class="section">
+            <div class="contact-section">
+                <div class="contact-content">
+                    <h2>Get In Touch</h2>
+                    <p>Ready to discuss your event photography needs? I'd love to hear from you.</p>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <h3>Phone</h3>
+                            <p>+1 (848) 391-7298</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <h3>Email</h3>
+                            <p>clixphotographyllc@gmail.com</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h3>Location</h3>
+                            <p>South Brunswick, NJ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="">
+            <button class="lightbox-nav lightbox-prev" id="lightbox-prev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="lightbox-nav lightbox-next" id="lightbox-next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <button class="lightbox-close" id="lightbox-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 PhotoPro. All rights reserved. | Professional Event Photography</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentImages = [];
+        let currentImageIndex = 0;
+
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            const sections = document.querySelectorAll('.section');
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const mobileMenuIcon = mobileMenuToggle.querySelector('i');
+            
+            // Mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                
+                // Toggle hamburger/close icon
+                if (navMenu.classList.contains('active')) {
+                    mobileMenuIcon.classList.remove('fa-bars');
+                    mobileMenuIcon.classList.add('fa-times');
+                } else {
+                    mobileMenuIcon.classList.remove('fa-times');
+                    mobileMenuIcon.classList.add('fa-bars');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all nav links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all sections
+                    sections.forEach(section => section.classList.remove('active'));
+                    // Show target section
+                    const targetSection = document.getElementById(this.dataset.section);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                    
+                    // Close mobile menu after clicking a link
+                    if (window.innerWidth <= 768) {
+                        navMenu.classList.remove('active');
+                        mobileMenuIcon.classList.remove('fa-times');
+                        mobileMenuIcon.classList.add('fa-bars');
+                    }
+                });
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!navMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                    if (navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                        mobileMenuIcon.classList.remove('fa-times');
+                        mobileMenuIcon.classList.add('fa-bars');
+                    }
+                }
+            });
+
+            // Close mobile menu on window resize if it gets larger
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileMenuIcon.classList.remove('fa-times');
+                    mobileMenuIcon.classList.add('fa-bars');
+                }
+            });
+
+            // Category filter functionality
+            setupCategoryFilters();
+            
+            // Lightbox functionality
+            setupLightbox();
+            
+            // Initialize with all images visible
+            filterImages('all');
+        });
+
+        function setupCategoryFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all filter buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter images
+                    filterImages(this.dataset.category);
+                });
+            });
+        }
+
+        function filterImages(category) {
+            // Get current active section
+            const activeSection = document.querySelector('.section.active');
+            const photoItems = activeSection.querySelectorAll('.photo-item');
+            
+            currentImages = [];
+            
+            photoItems.forEach((item, index) => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                    const img = item.querySelector('img');
+                    currentImages.push({
+                        src: img.src,
+                        alt: img.alt
+                    });
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function setupLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxClose = document.getElementById('lightbox-close');
+            const lightboxPrev = document.getElementById('lightbox-prev');
+            const lightboxNext = document.getElementById('lightbox-next');
+            
+            // Open lightbox when clicking on photo items
+            document.addEventListener('click', function(e) {
+                const photoItem = e.target.closest('.photo-item');
+                if (photoItem) {
+                    const img = photoItem.querySelector('img');
+                    currentImageIndex = currentImages.findIndex(item => item.src === img.src);
+                    showLightboxImage(currentImageIndex);
+                    lightbox.classList.add('active');
+                }
+            });
+            
+            // Close lightbox
+            lightboxClose.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+            });
+            
+            // Close lightbox when clicking outside image
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                }
+            });
+            
+            // Previous image
+            lightboxPrev.addEventListener('click', function() {
+                currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+                showLightboxImage(currentImageIndex);
+            });
+            
+            // Next image
+            lightboxNext.addEventListener('click', function() {
+                currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+                showLightboxImage(currentImageIndex);
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (lightbox.classList.contains('active')) {
+                    switch(e.key) {
+                        case 'Escape':
+                            lightbox.classList.remove('active');
+                            break;
+                        case 'ArrowLeft':
+                            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+                            showLightboxImage(currentImageIndex);
+                            break;
+                        case 'ArrowRight':
+                            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+                            showLightboxImage(currentImageIndex);
+                            break;
+                    }
+                }
+            });
+        }
+
+        function showLightboxImage(index) {
+            const lightboxImg = document.getElementById('lightbox-img');
+            if (currentImages[index]) {
+                lightboxImg.src = currentImages[index].src;
+                lightboxImg.alt = currentImages[index].alt;
+                
+                // Remove any existing orientation classes
+                lightboxImg.classList.remove('portrait', 'landscape', 'square');
+                
+                // Wait for image to load to get accurate dimensions
+                lightboxImg.onload = function() {
+                    const aspectRatio = this.naturalWidth / this.naturalHeight;
+                    
+                    // Determine orientation and apply appropriate class
+                    if (aspectRatio < 0.8) {
+                        // Portrait: height > width (significantly)
+                        this.classList.add('portrait');
+                    } else if (aspectRatio > 1.2) {
+                        // Landscape: width > height (significantly)
+                        this.classList.add('landscape');
+                    } else {
+                        // Square or close to square
+                        this.classList.add('square');
+                    }
+                };
+                
+                // If image is already cached, trigger onload manually
+                if (lightboxImg.complete) {
+                    lightboxImg.onload();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
