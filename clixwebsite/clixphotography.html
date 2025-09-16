@@ -493,7 +493,6 @@
 <body>
     <header>
         <nav>
-            <!-- <a href="#" class="logo">PhotoPro</a> -->
             <img src="assets/clixLogo.png" alt="logo" style="width: 15%;">
             <button class="mobile-menu-toggle" id="mobile-menu-toggle">
                 <i class="fas fa-bars"></i>
@@ -1035,13 +1034,14 @@
     </div>
 
     <footer>
-        <p>&copy; 2024 PhotoPro. All rights reserved. | Professional Event Photography</p>
+        <p>&copy; <span id="current-year"></span> Clix Photography. All rights reserved. | Professional Event Photography</p>
     </footer>
 
     <script>
         // Global variables
         let currentImages = [];
         let currentImageIndex = 0;
+        document.getElementById('current-year').textContent = new Date().getFullYear();
 
         // Navigation functionality
         document.addEventListener('DOMContentLoaded', function() {
