@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Event Photography</title>
+    <title>Clix Photography</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -21,21 +21,28 @@
 
         /* Header */
         header {
-            background: rgba(0, 0, 0, 0.95);
-            padding: 1rem 0;
+            background: transparent;
+            padding: 1.5rem 0;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 1rem 0;
             backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
         }
@@ -45,28 +52,57 @@
             font-weight: bold;
             color: #fff;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 15%;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled .logo img {
+            width: 15%;
         }
 
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 3rem;
         }
 
         .nav-menu a {
             color: #fff;
             text-decoration: none;
-            font-weight: 300;
-            transition: color 0.3s;
+            font-weight: 400;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            padding: 0.5rem 0;
         }
 
-        .nav-menu a:hover {
-            color: #ffb340;
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffb340;
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
         }
 
         .nav-menu a.active {
             color: #ffb340;
+        }
+
+        .nav-menu a.active::after {
+            width: 100%;
         }
 
         /* Mobile Menu Toggle */
@@ -83,29 +119,137 @@
         /* Main Content */
         main {
             margin-top: 80px;
-            min-height: calc(100vh - 80px);
+            min-height: calc(90vh - 80px);
         }
 
         /* Hero Section */
         .hero {
-            height: 60vh;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('assets/home.jpg') center/cover;
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('assets/home.jpg') center/cover;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            text-align: left;
             color: #ffb340;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            transition: transform 0.5s ease-out;
+        }
+
+        .hero:hover::before {
+            transform: scale(1.05);
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
         }
 
         .hero-content h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            font-weight: 300;
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 200;
+            line-height: 1.2;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.5s;
         }
 
         .hero-content p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            font-size: 1.4rem;
+            opacity: 0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.6;
+            color: #ffb340;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 0.7s;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 2px solid #ffb340;
+            color: #ffb340;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.9s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #ffb340;
+            transition: transform 0.5s ease;
+            z-index: -1;
+        }
+
+        .hero-cta:hover {
+            color: #000;
+        }
+
+        .hero-cta:hover::before {
+            transform: translateX(100%);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
         }
 
         /* Portfolio Section */
@@ -162,24 +306,43 @@
         /* Photo Grid */
         .photo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
             margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
         }
 
         .photo-item {
             position: relative;
-            aspect-ratio: 4/3;
             overflow: hidden;
             cursor: pointer;
             background: #111;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .photo-item:nth-child(3n+1) {
+            grid-row: span 1;
+        }
+
+        .photo-item:nth-child(3n+2) {
+            grid-row: span 1.2;
+        }
+
+        .photo-item:nth-child(3n) {
+            grid-row: span 1.5;
         }
 
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .photo-overlay {
@@ -188,12 +351,20 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: all 0.4s ease;
+            padding: 2rem;
+            backdrop-filter: blur(3px);
+        }
+
+        .photo-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
 
         .photo-item:hover .photo-overlay {
@@ -201,16 +372,53 @@
         }
 
         .photo-item:hover img {
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
 
         .view-icon {
             font-size: 2rem;
             color: #fff;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             padding: 1rem;
             border-radius: 50%;
             backdrop-filter: blur(10px);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease 0.1s;
+        }
+
+        .photo-overlay:hover .view-icon {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .photo-category {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            color: #fff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease 0.2s;
+        }
+
+        .photo-overlay:hover .photo-category {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         /* Lightbox */
@@ -255,8 +463,9 @@
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
-            transition: transform 0.6s ease;
-            will-change: transform;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+            will-change: transform, opacity;
+            opacity: 1;
         }
 
         .lightbox-img-container img.current {
@@ -266,6 +475,19 @@
         .lightbox-img-container img.next {
             z-index: 1;
             transform: translateX(0);
+            opacity: 0;
+        }
+
+        .lightbox-img-container img.fade-out {
+            opacity: 0;
+        }
+
+        .lightbox-img-container img.slide-left {
+            transform: translateX(-100%);
+        }
+
+        .lightbox-img-container img.slide-right {
+            transform: translateX(100%);
         }
 
         /* Portrait orientation styles */
@@ -381,6 +603,7 @@
             padding: 4rem 2rem;
             text-align: center;
             color: #ffb340;
+            background: #111;
         }
 
         .contact-content {
@@ -545,7 +768,7 @@
     <header>
         <nav>
             <a href="#" class="logo" id="logo-link">
-                <img src="assets/clixLogo.png" alt="logo" style="width: 15%;">
+                <img src="assets/clixLogo.png" alt="logo" style="width: 10%;">
             </a>
             <button class="mobile-menu-toggle" id="mobile-menu-toggle">
                 <i class="fas fa-bars"></i>
@@ -564,8 +787,12 @@
         <div id="home" class="section active">
             <div class="hero">
                 <div class="hero-content">
-                    <h1>Professional Event Photography</h1>
-                    <p>Capturing life's most precious moments with artistic vision and technical excellence</p>
+                    <h1>Capturing Moments,<br>Creating Memories</h1>
+                    <p>Professional event photography that tells your story with elegance and authenticity. Every moment, perfectly preserved.</p>
+                    <button class="hero-cta" onclick="navigateToSection('contact')">Book Your Session</button>
+                </div>
+                <div class="scroll-indicator">
+                    <i class="fas fa-chevron-down"></i>
                 </div>
             </div>
 
@@ -1103,6 +1330,70 @@
         let currentImages = [];
         let currentImageIndex = 0;
         document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Function to scroll to featured work
+        function scrollToFeaturedWork() {
+            const featuredWorkSection = document.querySelector('.portfolio-section');
+            if (featuredWorkSection) {
+                featuredWorkSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Function to handle section navigation
+        function navigateToSection(sectionId) {
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            const sections = document.querySelectorAll('.section');
+            
+            // Remove active class from all nav links
+            navLinks.forEach(l => l.classList.remove('active'));
+            // Add active class to corresponding nav link
+            const navLink = document.querySelector(`[data-section="${sectionId}"]`);
+            if (navLink) {
+                navLink.classList.add('active');
+            }
+            
+            // Hide all sections
+            sections.forEach(section => section.classList.remove('active'));
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                // Scroll into view
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        let header = document.querySelector('header');
+        let scrollTrigger = 60;
+
+        window.onscroll = function() {
+            if (window.scrollY >= scrollTrigger || window.pageYOffset >= scrollTrigger) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        };
         
         // Navigation functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -1160,22 +1451,12 @@
                 }
             });
             
+            // Handle navigation link clicks
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
-                    // Remove active class from all nav links
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    // Add active class to clicked link
-                    this.classList.add('active');
-                    
-                    // Hide all sections
-                    sections.forEach(section => section.classList.remove('active'));
-                    // Show target section
-                    const targetSection = document.getElementById(this.dataset.section);
-                    if (targetSection) {
-                        targetSection.classList.add('active');
-                    }
+                    const sectionId = this.dataset.section;
+                    navigateToSection(sectionId);
                     
                     // Close mobile menu after clicking a link
                     if (window.innerWidth <= 768) {
@@ -1213,6 +1494,12 @@
                     mobileMenuIcon.classList.add('fa-bars');
                 }
             });
+
+            // Set up scroll indicator
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            if (scrollIndicator) {
+                scrollIndicator.addEventListener('click', scrollToFeaturedWork);
+            }
 
             // Category filter functionality
             setupCategoryFilters();
@@ -1370,10 +1657,13 @@
             
             const imageData = currentImages[index];
 
-            function updateImage(img, data) {
+            function updateImage(img, data, options = {}) {
                 return new Promise((resolve) => {
-                    img.style.transition = 'none';
-                    img.style.transform = 'translateX(0)';
+                    if (options.noTransition) {
+                        img.style.transition = 'none';
+                    }
+                    img.style.transform = options.transform || 'translateX(0)';
+                    img.style.opacity = options.opacity !== undefined ? options.opacity : 1;
                     img.src = data.src;
                     img.alt = data.alt;
                     
@@ -1386,24 +1676,32 @@
             }
 
             if (direction !== 'none') {
-                // First prepare the next image in position
-                updateImage(nextImg, imageData).then(() => {
-                    // Force browser to recognize the next image is in position
+                // Prepare the next image
+                const startTransform = direction === 'next' ? 'translateX(100%)' : 'translateX(-100%)';
+                updateImage(nextImg, imageData, { 
+                    noTransition: true, 
+                    transform: startTransform,
+                    opacity: 0 
+                }).then(() => {
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
-                            // Now slide the current image away
-                            currentImg.style.transition = 'transform 0.6s ease';
-                            currentImg.style.transform = direction === 'next' ? 
-                                'translateX(-100%)' : 'translateX(100%)';
+                            // Start transitions
+                            currentImg.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease';
+                            nextImg.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease';
+                            
+                            // Animate current image out
+                            currentImg.style.transform = direction === 'next' ? 'translateX(-100%)' : 'translateX(100%)';
+                            currentImg.style.opacity = '0';
+                            
+                            // Animate next image in
+                            nextImg.style.transform = 'translateX(0)';
+                            nextImg.style.opacity = '1';
 
-                            // After slide completes, make the next image the current one
+                            // After animation completes
                             setTimeout(() => {
-                                // Update current image without animation
-                                currentImg.style.transition = 'none';
-                                currentImg.style.transform = 'translateX(0)';
-                                currentImg.src = imageData.src;
-                                currentImg.alt = imageData.alt;
-                            }, 600);
+                                // Reset current image
+                                updateImage(currentImg, imageData, { noTransition: true });
+                            }, 800);
                         });
                     });
                 });
@@ -1411,7 +1709,7 @@
                 // Direct change without animation
                 nextImg.style.transition = 'none';
                 nextImg.style.transform = 'translateX(0)';
-                updateImage(currentImg, imageData);
+                updateImage(currentImg, imageData, { noTransition: true });
             }
         }
     </script>
