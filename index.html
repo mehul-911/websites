@@ -57,12 +57,22 @@
         }
 
         .logo img {
-            width: 15%;
+            width: 10%;
             transition: all 0.3s ease;
         }
 
         header.scrolled .logo img {
-            width: 15%;
+            width: 10%;
+        }
+
+        @media (max-width: 768px) {
+            .logo img {
+                width: 20%;
+            }
+            
+            header.scrolled .logo img {
+                width: 20%;
+            }
         }
 
         .nav-menu {
@@ -768,7 +778,7 @@
     <header>
         <nav>
             <a href="#" class="logo" id="logo-link">
-                <img src="assets/clixLogo.png" alt="logo" style="width: 10%;">
+                <img src="assets/clixLogo.png" alt="logo">
             </a>
             <button class="mobile-menu-toggle" id="mobile-menu-toggle">
                 <i class="fas fa-bars"></i>
