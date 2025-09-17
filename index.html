@@ -68,6 +68,7 @@
         .nav-menu a.active {
             color: #ffb340;
         }
+
         /* Mobile Menu Toggle */
         .mobile-menu-toggle {
             display: none;
@@ -232,36 +233,75 @@
 
         .lightbox-content {
             position: relative;
-            max-width: 90vw;
-            max-height: 90vh;
+            width: 90vw;
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .lightbox-img-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .lightbox img {
-            max-width: 100%;
-            max-height: 100%;
+        .lightbox-img-container img {
+            position: absolute;
+            max-width: 90%;
+            max-height: 90%;
             object-fit: contain;
-            transition: all 0.3s ease;
+            transition: transform 0.6s ease;
+            will-change: transform;
+        }
+
+        .lightbox-img-container img.current {
+            z-index: 2;
+        }
+
+        .lightbox-img-container img.next {
+            z-index: 1;
+            transform: translateX(0);
+        }
+
+        /* Portrait orientation styles */
+        .lightbox-img-container img.portrait {
+            max-width: 90vw;
+            max-height: 95vh;
+        }
+
+        /* Landscape orientation styles */
+        .lightbox-img-container img.landscape {
+            max-width: 95vw;
+            max-height: 90vh;
+        }
+
+        /* Square orientation styles */
+        .lightbox-img-container img.square {
+            max-width: 92vw;
+            max-height: 92vh;
         }
 
         /* Portrait orientation styles */
         .lightbox img.portrait {
-            max-width: 70vw;
-            max-height: 90vh;
+            max-width: 90vw;
+            max-height: 95vh;
         }
 
         /* Landscape orientation styles */
         .lightbox img.landscape {
-            max-width: 90vw;
-            max-height: 70vh;
+            max-width: 95vw;
+            max-height: 90vh;
         }
 
         /* Square orientation styles */
         .lightbox img.square {
-            max-width: 80vw;
-            max-height: 80vh;
+            max-width: 92vw;
+            max-height: 92vh;
         }
 
         .lightbox-nav {
@@ -276,6 +316,7 @@
             cursor: pointer;
             transition: background 0.3s;
             backdrop-filter: blur(10px);
+            z-index: 3;
         }
 
         .lightbox-nav:hover {
@@ -283,17 +324,17 @@
         }
 
         .lightbox-prev {
-            left: 2rem;
+            left: 1rem;
         }
 
         .lightbox-next {
-            right: 2rem;
+            right: 1rem;
         }
 
         .lightbox-close {
             position: absolute;
-            top: 2rem;
-            right: 2rem;
+            top: 1rem;
+            right: 1rem;
             background: rgba(255, 255, 255, 0.1);
             border: none;
             color: #fff;
@@ -302,6 +343,7 @@
             cursor: pointer;
             transition: background 0.3s;
             backdrop-filter: blur(10px);
+            z-index: 3;
         }
 
         .lightbox-close:hover {
@@ -452,16 +494,23 @@
             }
 
             .lightbox-nav {
-                padding: 0.5rem;
+                padding: 0.8rem;
                 font-size: 1.5rem;
+                background: rgba(255, 255, 255, 0.15);
             }
 
             .lightbox-prev {
-                left: 1rem;
+                left: 0.5rem;
             }
 
             .lightbox-next {
-                right: 1rem;
+                right: 0.5rem;
+            }
+
+            .lightbox-close {
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.8rem;
             }
 
             .contact-info {
@@ -472,17 +521,17 @@
             /* Mobile lightbox adjustments */
             .lightbox img.portrait {
                 max-width: 95vw;
-                max-height: 85vh;
+                max-height: 92vh;
             }
 
             .lightbox img.landscape {
                 max-width: 95vw;
-                max-height: 60vh;
+                max-height: 85vh;
             }
 
             .lightbox img.square {
-                max-width: 90vw;
-                max-height: 70vh;
+                max-width: 95vw;
+                max-height: 88vh;
             }
 
             .lightbox-close {
@@ -644,7 +693,6 @@
                 </div>
 
                 <div class="photo-grid" id="portfolio-grid">
-                    <!-- Same photos as above - you can add more here -->
                     <!--  Wedding Photos -->
                     <div class="photo-item" data-category="wedding">
                         <img src="assets/wedding/1.jpg" alt="Wedding Photography">
@@ -948,12 +996,6 @@
                             <i class="fas fa-expand-alt view-icon"></i>
                         </div>
                     </div> 
-                    <!-- <div class="photo-item" data-category="kids">
-                        <img src="assets/kids/4.jpg" alt="kids">
-                        <div class="photo-overlay">
-                            <i class="fas fa-expand-alt view-icon"></i>
-                        </div>
-                    </div>  -->
                     <div class="photo-item" data-category="kids">
                         <img src="assets/kids/5.jpg" alt="kids">
                         <div class="photo-overlay">
@@ -1036,7 +1078,10 @@
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox">
         <div class="lightbox-content">
-            <img id="lightbox-img" src="" alt="">
+            <div class="lightbox-img-container">
+                <img id="lightbox-img-current" class="current" src="" alt="">
+                <img id="lightbox-img-next" class="next" src="" alt="">
+            </div>
             <button class="lightbox-nav lightbox-prev" id="lightbox-prev">
                 <i class="fas fa-chevron-left"></i>
             </button>
@@ -1067,6 +1112,7 @@
             const navMenu = document.getElementById('nav-menu');
             const mobileMenuIcon = mobileMenuToggle.querySelector('i');
             const logoLink = document.getElementById('logo-link');
+            
             // Logo click event - go to home page
             logoLink.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1224,7 +1270,6 @@
             
             // Reset current image index
             currentImageIndex = 0;
-            
         }
 
         function setupLightbox() {
@@ -1238,28 +1283,27 @@
             document.addEventListener('click', function(e) {
                 const photoItem = e.target.closest('.photo-item');
                 if (photoItem && photoItem.style.display !== 'none') {
-                    // Find the correct index in the filtered currentImages array
                     const img = photoItem.querySelector('img');
-                    let foundIndex = -1;
+                    if (!img) return;
+
+                    // Find image index
+                    let foundIndex = currentImages.findIndex(item => 
+                        item.src === img.src && item.element === photoItem
+                    );
                     
-                    // Search for the clicked image in currentImages array
-                    for (let i = 0; i < currentImages.length; i++) {
-                        if (currentImages[i].src === img.src && currentImages[i].element === photoItem) {
-                            foundIndex = i;
-                            break;
-                        }
-                    }
-                    
-                    // If not found by element match, try by src only
                     if (foundIndex === -1) {
                         foundIndex = currentImages.findIndex(item => item.src === img.src);
                     }
                     
-                    // Set the index
-                    currentImageIndex = foundIndex >= 0 ? foundIndex : 0;                    
-                    if (currentImages.length > 0) {
-                        showLightboxImage(currentImageIndex);
+                    if (foundIndex !== -1) {
+                        currentImageIndex = foundIndex;
                         lightbox.classList.add('active');
+                        // Pre-load the image
+                        const preloadImg = new Image();
+                        preloadImg.src = currentImages[foundIndex].src;
+                        preloadImg.onload = function() {
+                            showLightboxImage(currentImageIndex, 'none');
+                        };
                     }
                 }
             });
@@ -1279,16 +1323,18 @@
             // Previous image
             lightboxPrev.addEventListener('click', function() {
                 if (currentImages.length > 0) {
-                    currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
-                    showLightboxImage(currentImageIndex);
+                    const prevIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+                    currentImageIndex = prevIndex;
+                    showLightboxImage(currentImageIndex, 'prev');
                 }
             });
             
             // Next image
             lightboxNext.addEventListener('click', function() {
                 if (currentImages.length > 0) {
-                    currentImageIndex = (currentImageIndex + 1) % currentImages.length;
-                    showLightboxImage(currentImageIndex);
+                    const nextIndex = (currentImageIndex + 1) % currentImages.length;
+                    currentImageIndex = nextIndex;
+                    showLightboxImage(currentImageIndex, 'next');
                 }
             });
             
@@ -1301,19 +1347,20 @@
                             break;
                         case 'ArrowLeft':
                             currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
-                            showLightboxImage(currentImageIndex);
+                            showLightboxImage(currentImageIndex, 'prev');
                             break;
                         case 'ArrowRight':
                             currentImageIndex = (currentImageIndex + 1) % currentImages.length;
-                            showLightboxImage(currentImageIndex);
+                            showLightboxImage(currentImageIndex, 'next');
                             break;
                     }
                 }
             });
         }
 
-        function showLightboxImage(index) {
-            const lightboxImg = document.getElementById('lightbox-img');
+        function showLightboxImage(index, direction = 'none') {
+            const currentImg = document.getElementById('lightbox-img-current');
+            const nextImg = document.getElementById('lightbox-img-next');
             
             // Ensure index is within bounds
             if (index < 0 || index >= currentImages.length || !currentImages[index]) {
@@ -1322,32 +1369,49 @@
             }
             
             const imageData = currentImages[index];
-            lightboxImg.src = imageData.src;
-            lightboxImg.alt = imageData.alt;
-            
-            // Remove any existing orientation classes
-            lightboxImg.classList.remove('portrait', 'landscape', 'square');
-            
-            // Wait for image to load to get accurate dimensions
-            lightboxImg.onload = function() {
-                const aspectRatio = this.naturalWidth / this.naturalHeight;
-                
-                // Determine orientation and apply appropriate class
-                if (aspectRatio < 0.8) {
-                    // Portrait: height > width (significantly)
-                    this.classList.add('portrait');
-                } else if (aspectRatio > 1.2) {
-                    // Landscape: width > height (significantly)
-                    this.classList.add('landscape');
-                } else {
-                    // Square or close to square
-                    this.classList.add('square');
-                }
-            };
-            
-            // If image is already cached, trigger onload manually
-            if (lightboxImg.complete) {
-                lightboxImg.onload();
+
+            function updateImage(img, data) {
+                return new Promise((resolve) => {
+                    img.style.transition = 'none';
+                    img.style.transform = 'translateX(0)';
+                    img.src = data.src;
+                    img.alt = data.alt;
+                    
+                    if (img.complete) {
+                        resolve();
+                    } else {
+                        img.onload = () => resolve();
+                    }
+                });
+            }
+
+            if (direction !== 'none') {
+                // First prepare the next image in position
+                updateImage(nextImg, imageData).then(() => {
+                    // Force browser to recognize the next image is in position
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            // Now slide the current image away
+                            currentImg.style.transition = 'transform 0.6s ease';
+                            currentImg.style.transform = direction === 'next' ? 
+                                'translateX(-100%)' : 'translateX(100%)';
+
+                            // After slide completes, make the next image the current one
+                            setTimeout(() => {
+                                // Update current image without animation
+                                currentImg.style.transition = 'none';
+                                currentImg.style.transform = 'translateX(0)';
+                                currentImg.src = imageData.src;
+                                currentImg.alt = imageData.alt;
+                            }, 600);
+                        });
+                    });
+                });
+            } else {
+                // Direct change without animation
+                nextImg.style.transition = 'none';
+                nextImg.style.transform = 'translateX(0)';
+                updateImage(currentImg, imageData);
             }
         }
     </script>
